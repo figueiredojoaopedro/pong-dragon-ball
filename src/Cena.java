@@ -27,11 +27,12 @@ public class Cena implements GLEventListener {
 	public boolean triangulo = false;
 	private Textura textura;
 	private int totalTextura = 1;
-	public static final String Esfera = "imagens/esferaSemFundo.png";
+	public static final String Esfera = "imagens/esfera.png";
 	public static final String Menu = "imagens/fundo1.png";
-	public static final String NuvemGoku = "imagens/nuvemGoku.png";
-	public static final String Obstaculo = "imagens/obstaculo.png";
-//	public static final String Heart = "./imagens/heart.png";
+	public static final String Marble = "imagens/marble.jpg";
+	public static final String Obstaculo = "imagens/obstaculo.jpg";
+	public static final String Heart = "imagens/heart.jpg";
+	public static final String Heart2 = "imagens/heart2.jpg";
 	public int filtro = GL2.GL_LINEAR;
 	public int wrap = GL2.GL_REPEAT;
 	public int modo = GL2.GL_MODULATE;
@@ -109,17 +110,14 @@ public class Cena implements GLEventListener {
 		float begin = 1.0f;
 
 
-		Texto(left, begin -= 0.1f, size, "                                    Bem vindo ao Pong Jogl                                    ");
-		Texto(left, begin -= 0.06f, size, "| ----------------------------------------- |");
+		Texto(left, begin -= 0.1f, size, "                             Bem vindo ao Pong Jogl Dragon Ball                                   ");
 		Texto(left, begin -= 0.06f, size, "| O objetivo principal é rebater a bola!");
-		Texto(left, begin -= 0.07f, size, "| ----------------------------------------- |");
 		Texto(left, begin -= 0.09f, size, "|  Teclas: ");
 		Texto(left, begin -= 0.09f, size, "| - PARA INICIAR O JOGO [S]");
 		Texto(left, begin -= 0.08f, size, "| - Movimentação = [<] [>] ou [A] [D] ");
 		Texto(left, begin -= 0.06f, size, "| - Pause = [P] ");
 		Texto(left, begin -= 0.06f, size, "| - Tela Inicial = [L] ");
 		Texto(left, begin -= 0.06f, size, "| - Fechar o game = [Esc] ");
-		Texto(left, begin -= 0.07f, size, "| ----------------------------------------- |");
 		Texto(left, begin -= 0.09f, size, "| # Diretrizes: ");
 		Texto(left, begin -= 0.08f, size, "| - Cada batida na bola serão computados 20 Pontos ");
 		Texto(left, begin -= 0.06f, size, "| - Fazendo 200 Pontos avança para a Segunda Fase ");
@@ -161,7 +159,7 @@ public class Cena implements GLEventListener {
 			Fase = 3;
 		}
 
-		Texto(0.8f, 0.9f, "big", "Pontuação: " + userScore);
+		Texto(-0.8f, 0.9f, "big", "Pontuação: " + userScore);
 
 		for (int i = 1; i <= 5; i++) {
 			if (DefineVidas >= i)
@@ -203,7 +201,7 @@ public class Cena implements GLEventListener {
 			Fase = 3;
 		}
 
-		Texto(0.8f, 0.9f, "big", "Pontuação: " + userScore);
+		Texto(-0.8f, 0.9f, "big", "Pontuação: " + userScore);
 
 		for (int i = 1; i <= 5; i++) {
 			if (DefineVidas >= i)
@@ -230,18 +228,33 @@ public class Cena implements GLEventListener {
 	}
 
 	public void DesenhaVidas(float pos, boolean filled) { // Vida
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+
 		gl.glPushMatrix();
-		if (filled)
-			gl.glColor3f(1f, 0, 0f); // Cor da Vida
-		else
-			gl.glColor3f(1, 1, 1); // Cor quando perde vida
+		textura.setAutomatica(false);
+		textura.setFiltro(filtro);
+		textura.setModo(modo);
+		textura.setWrap(wrap);
 
+		if (filled) {
+			textura.gerarTextura(gl, Heart, 0);
+		} else {
+			textura.gerarTextura(gl, Heart2, 0);
+		}
 		gl.glTranslatef(0.4f + pos, 0.8f, 0); // Posição da vida
-		gl.glRotatef(LifeAnimation, 0.05f, 0.08f, 1); //Animação de rotação
-		LifeAnimation += 0.7f;
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glTexCoord2f(0, 1); gl.glVertex2f(-0.045f, 0.15f);
+		gl.glTexCoord2f(1, 1); gl.glVertex2f(0.045f, 0.15f);
+		gl.glTexCoord2f(1, 0); gl.glVertex2f(0.045f, -0.06f);
+		gl.glTexCoord2f(0, 0); gl.glVertex2f(-0.045f, -0.06f);
+		gl.glEnd();
 
-		glut.glutSolidCube(0.03f); // Forma da Vida
+		textura.desabilitarTextura(gl, 0);
+
 		gl.glPopMatrix();
+
+		gl.glDisable(GL2.GL_BLEND);
 	}
 
 	public void FimDeJogo() {
@@ -347,15 +360,13 @@ public class Cena implements GLEventListener {
 		textura.setModo(modo);
 		textura.setWrap(wrap);
 		textura.gerarTextura(gl, Obstaculo, 0);
-
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(1, 1, 1);
-		gl.glTexCoord2f(0, limite);      gl.glVertex2f(-0.18f, 0.53f);
+		gl.glTexCoord2f(0, limite); gl.glVertex2f(-0.18f, 0.53f);
 		gl.glTexCoord2f(limite, limite); gl.glVertex2f(0.18f, 0.53f);
-		gl.glTexCoord2f(limite, 0);      gl.glVertex2f(0.18f, -0.13f);
-		gl.glTexCoord2f(0, 0);           gl.glVertex2f(-0.18f, -0.13f);
+		gl.glTexCoord2f(limite, 0); gl.glVertex2f(0.18f, -0.13f);
+		gl.glTexCoord2f(0, 0); gl.glVertex2f(-0.18f, -0.13f);
 		gl.glEnd();
-
 		textura.desabilitarTextura(gl, 0);
 
 		gl.glPopMatrix();
@@ -367,7 +378,7 @@ public class Cena implements GLEventListener {
 		textura.setFiltro(filtro);
 		textura.setModo(modo);
 		textura.setWrap(wrap);
-		textura.gerarTextura(gl, NuvemGoku, 0);
+		textura.gerarTextura(gl, Marble, 0);
 
 		gl.glTranslatef(BarraJogador, 0, 0);
 		gl.glBegin(GL2.GL_QUADS);
